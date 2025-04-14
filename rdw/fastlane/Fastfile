@@ -1,0 +1,82 @@
+default_platform(:android)
+
+# HOWTO
+# 1. add fastlane plugins:
+# - fastlane add_plugin firebase_app_distribution
+# - fastlane add_plugin increment_version_code
+# - fastlane add_plugin changelog
+# 2. run upload_to_firebase_debug: this does everything, runs the tests, etc.
+
+section_identifier = "[Latest changes]"
+
+platform :android do
+  desc "Runs all the unit tests"
+  lane :tests do
+
+    gradle(task: "clean")
+    gradle(task: "test#{ENV["APP_BUILD_TYPE"]}DebugUnitTest")
+
+    clean_build_artifacts
+  end
+
+  desc "Set version name"
+  lane :set_build_version_name do |values|
+    date = DateTime.now
+    version = "#{date.strftime("%Y.%m.")}#{values[:buildNumber]}"
+    set_properties_value(
+      path: "version.properties",
+      key: "VERSION_NAME",
+      value: version,
+    )
+  end
+
+  desc "Increment versionCode"
+  lane :increment_build_version_code do
+    # Fetch the latest release from Firebase App Distribution
+    latest_release = firebase_app_distribution_get_latest_release(
+      app: ENV["FIREBASE_APP_ID"],
+      service_credentials_file: ENV["SERVICE_CREDENTIALS_JSON"]
+    )
+
+    # Increment the versionCode by 1 from
+    newBuildNumber = latest_release[:buildVersion].to_i + 1
+
+    # Write the latest release version code on the build.gradle.kts file
+    increment_version_code({
+        gradle_file_path: "app/build.gradle.kts",
+        version_code: newBuildNumber
+    })
+
+    # Write to the version.properties file
+    set_build_version_name(buildNumber: newBuildNumber)
+
+  end
+
+  desc "Build and upload the APK (Debug) to Firebase App Distribution"
+  lane :upload_to_firebase_debug do
+
+#     tests # there is one test that only fails on CI/CD but succeeds locally
+
+    increment_build_version_code
+
+    gradle(task: "clean")
+
+    gradle(
+      task: "assemble",
+      build_type: "#{ENV["APP_BUILD_TYPE"]}Debug"
+    )
+
+    release_notes = read_changelog(
+      changelog_path: 'rdw/CHANGELOG.md',	# Specify path to CHANGELOG.md
+      section_identifier: section_identifier,	# Specify what section to read
+      excluded_markdown_elements: ['- None', '###']	# Specify which markdown elements should be excluded
+    ) + "\nci: #{ENV["GIT_SHA"]}\nbranch: #{ENV["GIT_REF"]}\n"
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      service_credentials_file: ENV["SERVICE_CREDENTIALS_JSON"],
+      release_notes: release_notes,
+      groups: ENV["FIREBASE_APP_DISTRIBUTION_GROUPS"]
+    )
+  end
+end

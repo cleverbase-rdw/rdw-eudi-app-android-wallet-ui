@@ -1,0 +1,67 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+#  pull_request:
+#    paths:
+#      - ".github/**"
+
+jobs:
+  build:
+
+    # Set to "runs-on: ubuntu-latest" to run on act locally, see README
+    runs-on:  [ "office-runners-x86_64" ]
+
+    env:
+      APP_BUILD_TYPE: 'Demo'
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      FIREBASE_APP_DISTRIBUTION_GROUPS: "public-users, rdw-users"
+      SERVICE_CREDENTIALS_JSON: 'service_credentials.json'
+      GIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      GIT_REF: ${{ github.ref }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.18
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up ruby cached env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Install fastlane
+        run: | 
+          bundle install
+          bundle update fastlane
+
+      - name: Setup fastlane plugins
+        run: |
+          bundle exec fastlane add_plugin firebase_app_distribution
+          bundle exec fastlane add_plugin increment_version_code
+          bundle exec fastlane add_plugin changelog
+
+      - name: Setup google-services.json file
+        run: echo ${{ secrets.GOOGLE_SERVICES_FILE_CONTENT_BASE64 }} | base64 -d > app/google-services.json
+
+      - name: Setup credential access keys
+        run: echo ${{ secrets.CREDENTIAL_FILE_CONTENT_BASE64 }} | base64 -d > service_credentials.json
+
+      - name: Overwrite existing Fastfile with ours
+        run: cp rdw/fastlane/Fastfile fastlane/
+
+      - name: Run tests then upload Apk to Firebase
+        run: |
+          bundle exec fastlane android upload_to_firebase_debug
