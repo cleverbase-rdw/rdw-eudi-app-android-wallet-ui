@@ -24,6 +24,7 @@ interface DashboardInteractor {
     fun getAppVersion(): String
     fun getChangelogUrl(): String?
     fun retrieveLogFileUris(): ArrayList<Uri>
+    fun logAppState(onForeground: Boolean)
 }
 
 class DashboardInteractorImpl(
@@ -36,5 +37,9 @@ class DashboardInteractorImpl(
 
     override fun retrieveLogFileUris(): ArrayList<Uri> {
         return ArrayList(logController.retrieveLogFileUris())
+    }
+
+    override fun logAppState(onForeground: Boolean) {
+        logController.d { "App State: ${if (onForeground) "onResume" else "onPause"}" }
     }
 }

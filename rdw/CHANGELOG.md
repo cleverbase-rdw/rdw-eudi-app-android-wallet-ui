@@ -3,6 +3,20 @@
 ## [Latest changes]
 
 ### Added
+- Device info and app state logs
+
+### Changed
+- None
+
+### Removed
+- None
+
+### Fixed
+- None
+
+## [2024.12.8]
+
+### Added
 - Firebase Crashlytics
 
 ### Changed
