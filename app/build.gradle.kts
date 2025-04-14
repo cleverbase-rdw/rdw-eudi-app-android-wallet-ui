@@ -70,7 +70,6 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.firebase.bom))
     implementation(project(LibraryModule.AssemblyLogic.path))
     "baselineProfile"(project(LibraryModule.BaselineProfileLogic.path))
 }

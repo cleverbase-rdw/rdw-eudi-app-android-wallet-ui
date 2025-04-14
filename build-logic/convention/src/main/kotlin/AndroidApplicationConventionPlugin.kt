@@ -37,6 +37,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("project.owasp.dependency.check")
                 apply("project.sonar")
                 apply("androidx.baselineprofile")
+                apply("com.google.firebase.crashlytics")
             }
 
             extensions.configure<ApplicationExtension> {
@@ -49,7 +50,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
+                val firebaseBom = libs.findLibrary("firebase-bom").get()
+
                 add("implementation", libs.findLibrary("androidx-profileinstaller").get())
+                add("implementation", platform(firebaseBom))
+                add("implementation", libs.findLibrary("firebase-crashlytics").get())
             }
         }
     }

@@ -31,5 +31,6 @@ plugins {
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.realm) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }
 true
