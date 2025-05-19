@@ -3,6 +3,20 @@
 ## [Latest changes]
 
 ### Added
+- None
+
+### Changed
+- Updated to new issuer URL
+
+### Removed
+- None
+
+### Fixed
+- None
+
+## [2025.01.10]
+
+### Added
 - Device info and app state logs
 
 ### Changed
