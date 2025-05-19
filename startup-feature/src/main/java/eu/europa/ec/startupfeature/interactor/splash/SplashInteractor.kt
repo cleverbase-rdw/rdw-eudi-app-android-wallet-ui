@@ -17,6 +17,8 @@
 package eu.europa.ec.startupfeature.interactor.splash
 
 import eu.europa.ec.commonfeature.config.BiometricMode
+import android.os.Build
+import eu.europa.ec.businesslogic.controller.log.LogController
 import eu.europa.ec.commonfeature.config.BiometricUiConfig
 import eu.europa.ec.commonfeature.config.IssuanceFlowUiConfig
 import eu.europa.ec.commonfeature.config.OnBackNavigationConfig
@@ -25,6 +27,7 @@ import eu.europa.ec.commonfeature.model.PinFlow
 import eu.europa.ec.corelogic.controller.WalletCoreDocumentsController
 import eu.europa.ec.resourceslogic.R
 import eu.europa.ec.resourceslogic.provider.ResourceProvider
+import eu.europa.ec.startupfeature.BuildConfig
 import eu.europa.ec.uilogic.config.ConfigNavigation
 import eu.europa.ec.uilogic.config.NavigationType
 import eu.europa.ec.uilogic.navigation.CommonScreens
@@ -36,13 +39,15 @@ import eu.europa.ec.uilogic.serializer.UiSerializer
 
 interface SplashInteractor {
     fun getAfterSplashRoute(): String
+    fun logDeviceInfo()
 }
 
 class SplashInteractorImpl(
     private val quickPinInteractor: QuickPinInteractor,
     private val uiSerializer: UiSerializer,
     private val resourceProvider: ResourceProvider,
-    private val walletCoreDocumentsController: WalletCoreDocumentsController
+    private val walletCoreDocumentsController: WalletCoreDocumentsController,
+    private val logController: LogController
 ) : SplashInteractor {
 
     private val hasDocuments: Boolean
@@ -105,5 +110,9 @@ class SplashInteractorImpl(
                 )
             )
         )
+    }
+
+    override fun logDeviceInfo() {
+        logController.i { "[${Build.BRAND} ${Build.MODEL}; Android ${Build.VERSION.SDK_INT}; ${Build.VERSION.SECURITY_PATCH}], [${BuildConfig.APP_VERSION}]" }
     }
 }

@@ -57,6 +57,7 @@ class SplashViewModel(
 
     private fun enterApplication() {
         viewModelScope.launch {
+            interactor.logDeviceInfo()
             delay((viewState.value.logoAnimationDuration + 500).toLong())
             val screenRoute = interactor.getAfterSplashRoute()
             setEffect {
