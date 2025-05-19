@@ -51,3 +51,8 @@ fastlane/report.xml
 
 # Kotlin
 .kotlin/*
+
+# Google services
+**/google-services.json
+.env
+.secrets

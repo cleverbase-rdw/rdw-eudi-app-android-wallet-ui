@@ -21,6 +21,7 @@ import project.convention.logic.getProperty
 plugins {
     id("project.android.application")
     id("project.android.application.compose")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -40,7 +41,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "eu.europa.ec.euidi"
+//        applicationId = "eu.europa.ec.euidi"
+        applicationId = "rdw.eudi.android.application"
         versionCode = 1
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -68,6 +70,7 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
     implementation(project(LibraryModule.AssemblyLogic.path))
     "baselineProfile"(project(LibraryModule.BaselineProfileLogic.path))
 }

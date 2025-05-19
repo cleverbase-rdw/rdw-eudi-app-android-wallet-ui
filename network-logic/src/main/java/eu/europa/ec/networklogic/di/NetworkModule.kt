@@ -30,6 +30,8 @@ import org.koin.core.annotation.Single
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import com.chuckerteam.chucker.api.ChuckerInterceptor
+import android.content.Context
 
 @Module
 @ComponentScan("eu.europa.ec.networklogic")
@@ -46,6 +48,7 @@ fun providesHttpLoggingInterceptor(configLogic: ConfigLogic) = HttpLoggingInterc
 
 @Factory
 fun provideOkHttpClient(
+    context: Context,
     httpLoggingInterceptor: HttpLoggingInterceptor,
     configLogic: ConfigLogic
 ): OkHttpClient {
@@ -54,6 +57,7 @@ fun provideOkHttpClient(
         .readTimeout(configLogic.environmentConfig.readTimeoutSeconds, TimeUnit.SECONDS)
         .connectTimeout(configLogic.environmentConfig.connectTimeoutSeconds, TimeUnit.SECONDS)
         .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(ChuckerInterceptor(context))
 
     return client.build()
 }

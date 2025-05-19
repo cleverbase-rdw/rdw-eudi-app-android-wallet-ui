@@ -38,6 +38,9 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.okhttp.mockwebserver)
 
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.no.op)
+
     testImplementation(project(LibraryModule.TestLogic.path))
 }
 
