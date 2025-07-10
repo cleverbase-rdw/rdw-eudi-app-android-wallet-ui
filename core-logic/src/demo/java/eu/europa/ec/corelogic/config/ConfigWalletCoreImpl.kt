@@ -18,6 +18,7 @@ package eu.europa.ec.corelogic.config
 
 import android.content.Context
 import eu.europa.ec.corelogic.BuildConfig
+import eu.europa.ec.corelogic.config.certificate.CertificateManager
 import eu.europa.ec.eudi.wallet.EudiWalletConfig
 import eu.europa.ec.eudi.wallet.issue.openid4vci.OpenId4VciManager
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.ClientIdScheme
@@ -25,6 +26,8 @@ import eu.europa.ec.eudi.wallet.transfer.openId4vp.EncryptionAlgorithm
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.EncryptionMethod
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.Format
 import eu.europa.ec.resourceslogic.R
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 
 internal class WalletCoreConfigImpl(
     private val context: Context
@@ -78,10 +81,30 @@ internal class WalletCoreConfigImpl(
                         withParUsage(OpenId4VciManager.Config.ParUsage.IF_SUPPORTED)
                         withUseDPoPIfSupported(true)
                     }
-
-                    configureReaderTrustStore(context, R.raw.eudi_pid_issuer_ut)
+                    configureReaderTrustStore(
+                        getCombinedCertificates(context, getAllCertificates().toIntArray())
+                    )
                 }
             }
             return _config!!
         }
+}
+
+fun getAllCertificates(): List<Int> {
+    return R.raw::class.java.fields.mapNotNull { field ->
+        try {
+            field.getInt(null)
+        } catch (e: IllegalAccessException) {
+            null // TODO add logging
+        }
+    }
+}
+
+fun getCombinedCertificates(context: Context, resArray: IntArray): List<X509Certificate> {
+    return resArray.map {
+        context.resources.openRawResource(it).use {
+            CertificateFactory.getInstance("X509")
+                .generateCertificate(it) as X509Certificate
+        }
+    } + CertificateManager(context).getStoredCertificates()
 }
