@@ -31,7 +31,7 @@ internal class WalletCoreConfigImpl(
 ) : WalletCoreConfig {
 
     private companion object {
-        const val VCI_ISSUER_URL = "https://dev.issuer.eudiw.dev"
+        const val VCI_ISSUER_URL = "https://mdlissuer.azurewebsites.net"
         const val VCI_CLIENT_ID = "wallet-dev"
         const val AUTHENTICATION_REQUIRED = false
     }
@@ -72,7 +72,12 @@ internal class WalletCoreConfigImpl(
                     }
 
                     configureOpenId4Vci {
-                        withIssuerUrl(issuerUrl = VCI_ISSUER_URL)
+                        withIssuerUrl(
+                            issuerUrl = context.getSharedPreferences(
+                                "IssuerCrudPrefs",
+                                Context.MODE_PRIVATE
+                            ).getString("selected_issuer", null) ?: VCI_ISSUER_URL
+                        )
                         withClientId(clientId = VCI_CLIENT_ID)
                         withAuthFlowRedirectionURI(BuildConfig.ISSUE_AUTHORIZATION_DEEPLINK)
                         withParUsage(OpenId4VciManager.Config.ParUsage.IF_SUPPORTED)

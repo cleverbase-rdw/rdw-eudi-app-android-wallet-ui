@@ -29,6 +29,7 @@ import eu.europa.ec.commonfeature.config.OfferCodeUiConfig
 import eu.europa.ec.commonfeature.config.OfferUiConfig
 import eu.europa.ec.issuancefeature.BuildConfig
 import eu.europa.ec.issuancefeature.ui.document.add.AddDocumentScreen
+import eu.europa.ec.issuancefeature.ui.document.add.issuer.IssuerScreen
 import eu.europa.ec.issuancefeature.ui.document.code.DocumentOfferCodeScreen
 import eu.europa.ec.issuancefeature.ui.document.details.DocumentDetailsScreen
 import eu.europa.ec.issuancefeature.ui.document.offer.DocumentOfferScreen
@@ -43,6 +44,21 @@ fun NavGraphBuilder.featureIssuanceGraph(navController: NavController) {
         startDestination = IssuanceScreens.AddDocument.screenRoute,
         route = ModuleRoute.IssuanceModule.route
     ) {
+        // Change Issuer
+        composable(
+            route = IssuanceScreens.ChangeIssuer.screenRoute,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern =
+                        BuildConfig.DEEPLINK + IssuanceScreens.ChangeIssuer.screenRoute
+                }
+            ),
+        ) {
+            IssuerScreen(
+                navController,
+            )
+        }
+
         // Add Document
         composable(
             route = IssuanceScreens.AddDocument.screenRoute,
