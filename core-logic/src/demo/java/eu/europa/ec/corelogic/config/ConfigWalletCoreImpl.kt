@@ -88,9 +88,11 @@ internal class WalletCoreConfigImpl(
                         withUseDPoPIfSupported(true)
                     }
 
-                    configureReaderTrustStore(
-                        getCombinedCertificates(context, getAllCertificates().toIntArray())
-                    )
+                    if(context.getCertificateCheckState()){
+                        configureReaderTrustStore(
+                            getCombinedCertificates(context, getAllCertificates().toIntArray())
+                        )
+                    }
                 }
             }
             return _config!!
@@ -114,4 +116,11 @@ fun getCombinedCertificates(context: Context, resArray: IntArray): List<X509Cert
                 .generateCertificate(it) as X509Certificate
         }
     } + CertificateManager(context).getStoredCertificates()
+}
+
+fun Context.getCertificateCheckState(): Boolean {
+    return this.getSharedPreferences(
+        "CertificatePrefs",
+        Context.MODE_PRIVATE
+    ).getBoolean("certificate_check_enabled", true)
 }

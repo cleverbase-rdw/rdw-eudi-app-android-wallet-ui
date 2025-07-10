@@ -24,5 +24,5 @@ data class SideMenuItemUi(
 )
 
 enum class SideMenuItemType {
-    CHANGE_PIN, RETRIEVE_LOGS, CHANGELOG
+    CHANGE_PIN, RETRIEVE_LOGS, CHANGELOG, ENABLE_CERTIFICATE
 }

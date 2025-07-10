@@ -53,6 +53,7 @@ import eu.europa.ec.uilogic.extension.openAppSettings
 import eu.europa.ec.uilogic.extension.openBleSettings
 import eu.europa.ec.uilogic.extension.openIntentChooser
 import eu.europa.ec.uilogic.extension.openUrl
+import eu.europa.ec.uilogic.extension.updateCertificateCheck
 import eu.europa.ec.uilogic.navigation.helper.handleDeepLinkAction
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -142,6 +143,10 @@ fun DashboardScreen(
                         effect.intent,
                         effect.chooserTitle
                     )
+                }
+
+                is Effect.EnableCertificateCheckToggle -> {
+                    context.updateCertificateCheck(effect.enableCertificateCheckState)
                 }
             }
         }.collect()

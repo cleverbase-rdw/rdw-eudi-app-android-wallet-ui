@@ -24,6 +24,7 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import eu.europa.ec.uilogic.container.EudiComponentActivity
+import androidx.core.content.edit
 
 fun Context.openDeepLink(deepLink: Uri) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -98,4 +99,14 @@ fun Context.openIntentChooser(intent: Intent, title: String? = null) {
         startActivity(Intent.createChooser(intent, title))
     } catch (_: Exception) {
     }
+}
+
+fun Context.updateCertificateCheck(newState: Boolean) {
+    this.getSharedPreferences(
+        "CertificatePrefs",
+        Context.MODE_PRIVATE
+    ).edit {
+        putBoolean("certificate_check_enabled", newState)
+    }
+
 }
