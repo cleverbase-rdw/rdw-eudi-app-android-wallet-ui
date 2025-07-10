@@ -70,6 +70,7 @@ timber = "5.0.1"
 treessence = "1.1.2"
 rqesUiSDK = "0.1.4"
 realm = "2.3.0"
+hyperion = "0.9.38"
 
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -160,6 +161,8 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 treessence = { group = "com.github.bastienpaulfr", name = "Treessence", version.ref = "treessence" }
 rqes-ui-sdk = { group = "eu.europa.ec.eudi", name = "eudi-lib-android-rqes-ui", version.ref = "rqesUiSDK" }
 kotlin-realm = { group = "io.realm.kotlin", name = "library-base", version.ref = "realm" }
+hyperion-core = { module = "com.willowtreeapps.hyperion:hyperion-core", version.ref = "hyperion" }
+hyperion-timber = { module = "com.willowtreeapps.hyperion:hyperion-timber", version.ref = "hyperion" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

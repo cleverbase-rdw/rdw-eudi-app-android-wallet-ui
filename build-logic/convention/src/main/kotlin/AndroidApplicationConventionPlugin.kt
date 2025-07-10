@@ -55,6 +55,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx-profileinstaller").get())
                 add("implementation", platform(firebaseBom))
                 add("implementation", libs.findLibrary("firebase-crashlytics").get())
+
+                add("debugImplementation", libs.findLibrary("hyperion-core").get())
+                add("debugImplementation", libs.findLibrary("hyperion-timber").get())
             }
         }
     }
