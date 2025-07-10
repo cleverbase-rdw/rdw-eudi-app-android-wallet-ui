@@ -52,6 +52,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             val openId4VpScheme = "openid4vp"
             val openid4VpHost = "*"
 
+            val haipScheme = "haip"
+            val haipHost = "*"
+
             val credentialOfferScheme = "openid-credential-offer"
             val credentialOfferHost = "*"
 
@@ -83,6 +86,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     addConfigField("DEEPLINK", "$walletScheme://")
                     addConfigField("EUDI_OPENID4VP_SCHEME", eudiOpenId4VpScheme)
                     addConfigField("MDOC_OPENID4VP_SCHEME", mdocOpenId4VpScheme)
+                    addConfigField("HAIP_SCHEME", haipScheme)
                     addConfigField("OPENID4VP_SCHEME", openId4VpScheme)
                     addConfigField("CREDENTIAL_OFFER_SCHEME", credentialOfferScheme)
                     addConfigField("ISSUE_AUTHORIZATION_SCHEME", openId4VciAuthorizationScheme)
@@ -106,6 +110,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     manifestPlaceholders["mdocOpenid4vpHost"] = mdocOpenid4VpHost
                     manifestPlaceholders["openid4vpScheme"] = openId4VpScheme
                     manifestPlaceholders["openid4vpHost"] = openid4VpHost
+                    manifestPlaceholders["haipScheme"] = haipScheme
+                    manifestPlaceholders["haipHost"] = haipHost
 
                     // Manifest placeholders used for OpenId4VCI
                     manifestPlaceholders["credentialOfferHost"] = credentialOfferHost

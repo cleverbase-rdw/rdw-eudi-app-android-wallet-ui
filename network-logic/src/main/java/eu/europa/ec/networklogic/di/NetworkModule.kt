@@ -32,6 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerCollector
 
 @Module
 @ComponentScan("eu.europa.ec.networklogic")
@@ -57,7 +58,14 @@ fun provideOkHttpClient(
         .readTimeout(configLogic.environmentConfig.readTimeoutSeconds, TimeUnit.SECONDS)
         .connectTimeout(configLogic.environmentConfig.connectTimeoutSeconds, TimeUnit.SECONDS)
         .addInterceptor(httpLoggingInterceptor)
-        .addInterceptor(ChuckerInterceptor(context))
+        .addInterceptor(
+            ChuckerInterceptor.Builder(context)
+                .collector(ChuckerCollector(context))
+                .maxContentLength(250000L)
+                .redactHeaders(emptySet())
+                .alwaysReadResponseBody(false)
+                .build()
+        )
 
     return client.build()
 }
