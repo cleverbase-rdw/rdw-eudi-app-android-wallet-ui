@@ -23,6 +23,7 @@ import eu.europa.ec.commonfeature.config.OfferUiConfig
 import eu.europa.ec.commonfeature.config.PresentationMode
 import eu.europa.ec.commonfeature.config.RequestUriConfig
 import eu.europa.ec.commonfeature.model.PinFlow
+import eu.europa.ec.corelogic.config.getCertificateCheckState
 import eu.europa.ec.corelogic.di.getOrCreatePresentationScope
 import eu.europa.ec.dashboardfeature.interactor.DashboardInteractor
 import eu.europa.ec.dashboardfeature.model.SideMenuItemType
@@ -34,6 +35,7 @@ import eu.europa.ec.uilogic.component.ListItemData
 import eu.europa.ec.uilogic.component.ListItemLeadingContentData
 import eu.europa.ec.uilogic.component.ListItemMainContentData
 import eu.europa.ec.uilogic.component.ListItemTrailingContentData
+import eu.europa.ec.uilogic.component.wrap.CheckboxData
 import eu.europa.ec.uilogic.config.ConfigNavigation
 import eu.europa.ec.uilogic.config.NavigationType
 import eu.europa.ec.uilogic.mvi.MviViewModel
@@ -59,6 +61,7 @@ data class State(
     val menuAnimationDuration: Int = 1500,
     val appVersion: String = "",
     val changelogUrl: String?,
+    var certificateCheckEnabled: Boolean = true
 ) : ViewState
 
 sealed class Event : ViewEvent {
@@ -91,6 +94,7 @@ sealed class Effect : ViewSideEffect {
     }
 
     data class ShareLogFile(val intent: Intent, val chooserTitle: String) : Effect()
+    data class EnableCertificateCheckToggle(val enableCertificateCheckState: Boolean) : Effect()
 }
 
 enum class SideMenuAnimation {
@@ -105,11 +109,13 @@ class DashboardViewModel(
 ) : MviViewModel<Event, State, Effect>() {
     override fun setInitialState(): State {
         val changelogUrl = dashboardInteractor.getChangelogUrl()
+        val certificateCheckEnabled = resourceProvider.provideContext().getCertificateCheckState()
         return State(
             sideMenuTitle = resourceProvider.getString(R.string.dashboard_side_menu_title),
-            sideMenuOptions = getSideMenuOptions(changelogUrl = changelogUrl),
+            sideMenuOptions = getSideMenuOptions(changelogUrl = changelogUrl, certificateCheckEnabled),
             appVersion = dashboardInteractor.getAppVersion(),
             changelogUrl = changelogUrl,
+            certificateCheckEnabled = certificateCheckEnabled
         )
     }
 
@@ -188,10 +194,23 @@ class DashboardViewModel(
                     }
                 }
             }
+
+            SideMenuItemType.ENABLE_CERTIFICATE -> {
+                val newCertificateState = !viewState.value.certificateCheckEnabled
+                setState {
+                    copy(
+                        sideMenuOptions = getSideMenuOptions(changelogUrl = changelogUrl, newCertificateState),
+                        certificateCheckEnabled = newCertificateState
+                    )
+                }
+                setEffect {
+                    Effect.EnableCertificateCheckToggle(newCertificateState)
+                }
+            }
         }
     }
 
-    private fun getSideMenuOptions(changelogUrl: String?): List<SideMenuItemUi> {
+    private fun getSideMenuOptions(changelogUrl: String?, certificateCheckEnabled: Boolean): List<SideMenuItemUi> {
         return buildList {
             add(
                 SideMenuItemUi(
@@ -246,6 +265,27 @@ class DashboardViewModel(
                     )
                 )
             }
+
+            add(
+                SideMenuItemUi(
+                    type = SideMenuItemType.ENABLE_CERTIFICATE,
+                    data = ListItemData(
+                        itemId = resourceProvider.getString(R.string.dashboard_side_menu_enable_certificates_id),
+                        mainContentData = ListItemMainContentData.Text(
+                            text = resourceProvider.getString(R.string.dashboard_side_menu_enable_certificates)
+                        ),
+                        supportingText = resourceProvider.getString(R.string.dashboard_side_menu_enable_certificates_description),
+                        leadingContentData = ListItemLeadingContentData.Icon(
+                            iconData = AppIcons.Certified
+                        ),
+                        trailingContentData = ListItemTrailingContentData.Checkbox(
+                            checkboxData = CheckboxData(
+                                isChecked = certificateCheckEnabled,
+                            )
+                        )
+                    )
+                )
+            )
         }
     }
 
