@@ -18,6 +18,7 @@ package eu.europa.ec.corelogic.config
 
 import android.content.Context
 import eu.europa.ec.corelogic.BuildConfig
+import eu.europa.ec.corelogic.config.certificate.CertificateManager
 import eu.europa.ec.eudi.wallet.EudiWalletConfig
 import eu.europa.ec.eudi.wallet.issue.openid4vci.OpenId4VciManager
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.ClientIdScheme
@@ -25,13 +26,15 @@ import eu.europa.ec.eudi.wallet.transfer.openId4vp.EncryptionAlgorithm
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.EncryptionMethod
 import eu.europa.ec.eudi.wallet.transfer.openId4vp.Format
 import eu.europa.ec.resourceslogic.R
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 
 internal class WalletCoreConfigImpl(
     private val context: Context
 ) : WalletCoreConfig {
 
     private companion object {
-        const val VCI_ISSUER_URL = "https://issuer.eudiw.dev"
+        const val VCI_ISSUER_URL = "https://mdlissuer.azurewebsites.net" // "https://issuer.eudiw.dev"
         const val VCI_CLIENT_ID = "wallet-dev"
         const val AUTHENTICATION_REQUIRED = false
     }
@@ -72,7 +75,12 @@ internal class WalletCoreConfigImpl(
                     }
 
                     configureOpenId4Vci {
-                        withIssuerUrl(issuerUrl = VCI_ISSUER_URL)
+                        withIssuerUrl(
+                            issuerUrl = context.getSharedPreferences(
+                                "IssuerCrudPrefs",
+                                Context.MODE_PRIVATE
+                            ).getString("selected_issuer", null) ?: VCI_ISSUER_URL
+                        )
                         withClientId(clientId = VCI_CLIENT_ID)
                         withAuthFlowRedirectionURI(BuildConfig.ISSUE_AUTHORIZATION_DEEPLINK)
                         withParUsage(OpenId4VciManager.Config.ParUsage.IF_SUPPORTED)
@@ -80,17 +88,29 @@ internal class WalletCoreConfigImpl(
                     }
 
                     configureReaderTrustStore(
-                        context,
-                        R.raw.pid_issuer_cacz01,
-                        R.raw.pid_issuer_caee01,
-                        R.raw.pid_issuer_caeu01,
-                        R.raw.pid_issuer_calu01,
-                        R.raw.pid_issuer_canl01,
-                        R.raw.pid_issuer_capt01,
-                        R.raw.pid_issuer_caut01
+                        getCombinedCertificates(context, getAllCertificates().toIntArray())
                     )
                 }
             }
             return _config!!
         }
+}
+
+fun getAllCertificates(): List<Int> {
+    return R.raw::class.java.fields.mapNotNull { field ->
+        try {
+            field.getInt(null)
+        } catch (e: IllegalAccessException) {
+            null // TODO add logging
+        }
+    }
+}
+
+fun getCombinedCertificates(context: Context, resArray: IntArray): List<X509Certificate> {
+    return resArray.map {
+        context.resources.openRawResource(it).use {
+            CertificateFactory.getInstance("X509")
+                .generateCertificate(it) as X509Certificate
+        }
+    } + CertificateManager(context).getStoredCertificates()
 }
