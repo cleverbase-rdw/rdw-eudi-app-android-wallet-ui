@@ -1,3 +1,47 @@
+
+## Overview
+This is a fork of the [EUDI Android Wallet reference application](https://github.com/eu-digital-identity-wallet/eudi-app-android-wallet-ui) developed by RDW in collaboration with [Cleverbase](https://vidua.nl/en/legal/qualifications/) as part of the UC4 Mobile Driving Licence (mDL) Interop Test Event organized by the [POTENTIAL Consortium](https://www.digital-identity-wallet.eu/).
+
+The goal of this fork was to support RDW’s participation in real-world interoperability testing across multiple verifiers and wallet implementations, contributing to the practical evaluation of EUDI standards in the driving licence use case.
+
+
+
+
+## About us
+
+### RDW
+[RDW (Netherlands Vehicle Authority)](https://www.rdw.nl/) is a public service provider in the mobility domain. RDW plays a central role in registering and approving vehicles, as well as issuing driving licenses and contributing to the safe and sustainable mobility ecosystem in the Netherlands and across Europe.
+
+### Cleverbase
+[Cleverbase](https://vidua.nl/en/legal/qualifications/) is a qualified trust service provider (QTSP) and the organization behind Vidua, a high-assurance digital identity platform. With deep expertise in mobile security, eIDAS compliance, and public-sector digital transformation, Cleverbase helps governments and organizations implement secure, standards-based identity solutions.
+
+## Test Builds:
+Test APKs used during development and piloting are available in the Releases section of this repository. These builds were used for interoperability testing and demonstrations.
+- [Darft 23](https://github.com/cleverbase-rdw/rdw-eudi-app-android-wallet-ui/releases/download/draft.23/Berlin.test.event.draft23.apk) - Compatible with OpenID4VP Draft 23+
+  - toggle to disable verifier certificate check
+  - option to add new issuers at runtime
+  - in app logs for easier debugging (shake device to go to the log screen)
+  - support haip scheme
+- [Draft 21](https://github.com/cleverbase-rdw/rdw-eudi-app-android-wallet-ui/releases/download/draft.21/Berlin.test.event.draft18.apk) - Compatible with OpenID4VP Draft 18-21
+  - toggle to disable verifier certificate check
+  - in app logs for easier debugging (shake device to go to the log screen)
+  - support haip scheme
+
+> ⚠️ Note: These builds are provided for reference only. They are not maintained, may contain test data or incomplete features, and are not intended for production use.
+
+
+
+## Future plans and Contributions:
+This repository was created to support RDW’s early involvement in EUDI Wallet pilot activities. As of now, we are no longer accepting contributions, issues, or pull requests on this fork. Active development has concluded, and this repository is provided as-is for reference purposes only.
+
+We recommend contributing directly to the [official EUDI Wallet reference application](https://github.com/eu-digital-identity-wallet/eudi-app-android-wallet-ui), which continues to be actively maintained and developed.
+
+If you are planning similar initiatives or need guidance on implementing secure, standards-based mobile identity solutions. We're always open to sharing our knowledge or supporting public-sector and regulated-industry projects across Europe.
+
+## upstream readme 
+
+----
+
 # EUDI Android Wallet reference application
 
 :heavy_exclamation_mark: **Important!** Before you proceed, please read
